@@ -1,0 +1,9 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+- location: /home/frank/Workspace8/uniform-strings
+  extra-dep: true
+extra-deps:
+- data-easy-0.7.0
+resolver: lts-8.13
