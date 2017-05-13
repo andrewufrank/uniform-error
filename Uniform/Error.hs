@@ -28,7 +28,7 @@
 
 module Uniform.Error (
          ErrOrVal
-         , ErrIO
+         , ErrIO, ErrorT (..)
          , MonadError (..)
          , module Safe
          , liftIO
@@ -110,7 +110,7 @@ instance Error Text where
 -- noMsg = Left ""
 -- strMsg s = Left s
 
-callIO :: IO a -> ErrorT Text IO a
+--callIO ::  (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
 -- this is using now catch to grab all errors
 callIO op = do
         r2 <- liftIO $ do

@@ -1,5 +1,5 @@
 name: uniform-error
-version: 0.0.9
+version: 0.0.9.6
 cabal-version: >=1.22
 build-type: Simple
 license: GPL
