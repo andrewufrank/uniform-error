@@ -38,14 +38,14 @@ module Uniform.Error (
 --        , callx   -- for fileio
 --         , signal  -- only for ErrIO
 --         , makeSignal
-         , throwError, catchError
+         , throwError, catchError, bracketErrIO
          , SomeException
          -- but catch works only for errors thrown here, not for general errors/exceptions
 --        , ErrorT (..)  -- , runErrorT included
         , runErr
         , throwErrorT
         , errorT, errorWords
-        , fromJustNoteT, headNoteT
+        , fromJustNoteT,  headNoteT
 
         , undef
 --        , throwErrorWords
@@ -78,8 +78,13 @@ import           "monads-tf" Control.Monad.Error
 import           Safe
 import           Test.Framework
 import           Uniform.Strings
-import Control.Exception (catch, SomeException)
+--import Control.Exception (SomeException (..))
+--import Control.Monad.Catch
 
+import Control.Exception
+--    (catch, SomeException, mask
+--        , onException, displayException)
+--import Control.Exception.Monadic
 instance CharChains2 IOError Text where
     show' = s2t . show
 
@@ -100,6 +105,52 @@ runErr = runErrorT
 undef :: Text -> a
 undef = error . t2s
 -- ^ for type specification, not to be evaluated
+
+fromRight :: ErrOrVal a -> a
+fromRight (Right a) = a
+fromRight (Left msg) = errorT ["fromright", msg]
+
+bracketErrIO
+        ::
+            ErrIO a         -- ^ computation to run first (\"acquire resource\")
+        -> (a -> ErrIO b)  -- ^ computation to run last (\"release resource\")
+        -> (a -> ErrIO c)  -- ^ computation to run in-between
+        -> ErrIO  c          -- returns the value from the in-between computation
+--bracketErrIO before after thing = bracket before after thing
+-- no way to catch IO errors reliably in ErrIO -- missing Monad Mask or similar
+bracketErrIO before after thing =  (fmap fromRight) .  callIO $
+    bracket
+        (do
+            ra <- runErr $ before
+            return ra) --  (ra :: ErrOrVal a) )
+        (\a -> runErr $ after  . fromRight  $ a )
+        (\a -> runErr $ thing . fromRight  $ a)
+
+--        ra <- before
+--        rc <- thing ra
+--        return rc
+--    `catchError` \e -> do
+--                putIOwordsT ["bracketErrIO caught - release resource"]
+--                rb <- after ra
+--                throwError e
+--                return rc
+--
+--  mask $ \restore -> do
+--    a <- before
+--    r <- restore ( thing a) `onExceptionErrIO` after a
+--    _ <- after a
+--    return r
+--
+---- | Like 'finally', but only performs the final action if there was an
+---- exception raised by the computation.
+--onExceptionErrIO :: ErrIO a -> ErrIO b -> ErrIO a
+--onExceptionErrIO io what =
+--            io
+--        `catchError` \e -> do
+--                            _ <- what
+--                            throwError e
+--       -- the exception is ot ErrorType  $ s2t .  displayException   $ (e :: SomeException)
+
 
 --catchT :: (MonadError m, ErrorType m ~ Text) => m a -> (Text -> m a) -> m a
 --catchT p f = do
