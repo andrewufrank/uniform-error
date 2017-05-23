@@ -26,46 +26,50 @@
 {-# OPTIONS_GHC -w #-}
 
 
-module Uniform.Error (
-         ErrOrVal
-         , ErrIO, ErrorT (..)
-         , MonadError (..)
-         , module Safe
-         , liftIO
---         , callErrIO
-         , callIO
-         , maybe2error
---        , callx   -- for fileio
---         , signal  -- only for ErrIO
---         , makeSignal
-         , throwError, catchError, bracketErrIO
-         , SomeException
-         -- but catch works only for errors thrown here, not for general errors/exceptions
---        , ErrorT (..)  -- , runErrorT included
-        , runErr
-        , throwErrorT
-        , errorT, errorWords
-        , fromJustNoteT,  headNoteT
-
-        , undef
---        , throwErrorWords
---        , lift
---        , Identity (..)
---        , MonadState (..), StateT (..)
---        , MonadError (..)
---        , execState, execStateT, evalState, evalStateT
---        , MonadIO (..) -- , liftIO  included
-        , unless, when
---        , ErrOps3 (..)
-----        , ErrOps4 (..)
---        , runErrFail
-        , Musts (..)
---         N.throwM, N.SomeException, N.MonadCatch
---        , SomethingBad (..)
---        , callErrIO2, callIO2, throwErrorWords2
---        , callErrIO3
---        , catchAll
-    , htf_thisModulesTests
+module Uniform.Error (module Uniform.Error
+    , module Uniform.Strings
+    , module Safe
+    , module Control.Monad.Error  -- is monads-tf
+    , module Control.Exception   -- to avoid control.error
+--     , ErrOrVal
+--          , ErrIO, ErrorT (..)
+--          , MonadError (..)
+--          , module Safe
+--          , liftIO
+-- --         , callErrIO
+--          , callIO
+--          , maybe2error
+-- --        , callx   -- for fileio
+-- --         , signal  -- only for ErrIO
+-- --         , makeSignal
+--          , throwError, catchError, bracketErrIO
+--          , SomeException
+--          -- but catch works only for errors thrown here, not for general errors/exceptions
+-- --        , ErrorT (..)  -- , runErrorT included
+--         , runErr
+--         , throwErrorT
+--         , errorT, errorWords
+--         , fromJustNoteT,  headNoteT
+--
+--         , undef
+-- --        , throwErrorWords
+-- --        , lift
+-- --        , Identity (..)
+-- --        , MonadState (..), StateT (..)
+-- --        , MonadError (..)
+-- --        , execState, execStateT, evalState, evalStateT
+-- --        , MonadIO (..) -- , liftIO  included
+--         , unless, when
+-- --        , ErrOps3 (..)
+-- ----        , ErrOps4 (..)
+-- --        , runErrFail
+--         , Musts (..)
+-- --         N.throwM, N.SomeException, N.MonadCatch
+-- --        , SomethingBad (..)
+-- --        , callErrIO2, callIO2, throwErrorWords2
+-- --        , callErrIO3
+-- --        , catchAll
+--     , htf_thisModulesTests
         )  where
 
 import           "monads-tf" Control.Monad.Error
