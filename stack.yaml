@@ -4,4 +4,4 @@ packages:
 - '.'
 -  ../uniform-strings
 extra-deps:
-resolver: lts-8.15
+resolver: lts-9.1
