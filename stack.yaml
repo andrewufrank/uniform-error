@@ -2,6 +2,7 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
--  ../uniform-strings
+- ../uniform-strings
 extra-deps:
+- test-invariant-0.4.5.0
 resolver: lts-9.1
