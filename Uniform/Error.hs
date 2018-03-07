@@ -37,7 +37,7 @@ module Uniform.Error (module Uniform.Error
 import           "monads-tf" Control.Monad.Error
 import           Safe
 --import           Test.Framework
-import           Uniform.Strings hiding ((</>), (<.>), (<|>))
+import           Uniform.Strings hiding ((</>), (<.>))
 
 import Control.Exception
 instance CharChains2 IOError Text where
@@ -163,6 +163,13 @@ class (MonadError m) => Musts  m where
     mustReturnValueMB :: Eq v => Text -> v -> m v -> m Bool
     mustReturnValueErr :: (Eq v, Show v) => Text -> v -> v -> m Bool
 
+-- todo move to error
+-- does not work in the above situation
+mustError :: MonadError m => Text -> m a -> m Bool
+mustError msg f = do
+                        f
+                        return False
+               `catchError` \e -> return True
 
 
 instance (MonadError m, MonadIO m, Show (ErrorType m)

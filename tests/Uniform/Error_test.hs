@@ -31,7 +31,7 @@ module Uniform.Error_test where
 --import           "monads-tf" Control.Monad.Error
 --import           Safe
 import           Test.Framework
-import           Uniform.Strings hiding ((</>), (<.>), (<|>))
+--import           Uniform.Strings hiding ((</>), (<.>), (<|>))
 import Uniform.Error
 
 import Control.Exception
