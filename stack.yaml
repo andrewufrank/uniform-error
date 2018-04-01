@@ -2,5 +2,6 @@ flags: {}
 extra-package-dbs: []
 packages:
 - .
+- ../uniform-strings
 extra-deps: []
 resolver: lts-10.8
