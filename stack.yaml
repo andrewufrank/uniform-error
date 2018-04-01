@@ -3,4 +3,4 @@ extra-package-dbs: []
 packages:
 - .
 extra-deps: []
-resolver: /home/frank/Workspace8/uniformSnapshot.yaml
+resolver: lts 10.8

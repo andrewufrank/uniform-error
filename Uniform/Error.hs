@@ -51,7 +51,9 @@ type ErrIO  = ErrorT Text IO
 --catchError :: (ErrIO a) -> ErrIO a -> ErrIO a
 ---- | redefine catchError - the definition in monads-tf seems broken
 --catchError = catch
-
+toErrOrVal :: Either String a -> ErrOrVal a
+toErrOrVal (Left s) = Left (s2t s)
+toErrOrVal (Right r) = Right r
 
 -- | runErr to avoid the depreceated message for runErrorT, which is identical
 runErr :: ErrIO a -> IO (ErrOrVal a)
@@ -61,9 +63,9 @@ undef :: Text -> a
 undef = error . t2s
 -- ^ for type specification, not to be evaluated
 
-fromRight :: ErrOrVal a -> a
-fromRight (Right a) = a
-fromRight (Left msg) = errorT ["fromright", msg]
+fromRightEOV :: ErrOrVal a -> a
+fromRightEOV (Right a) = a
+fromRightEOV (Left msg) = errorT ["fromright", msg]
 
 bracketErrIO
         ::
@@ -73,13 +75,13 @@ bracketErrIO
         -> ErrIO  c          -- returns the value from the in-between computation
 --bracketErrIO before after thing = bracket before after thing
 -- no way to catch IO errors reliably in ErrIO -- missing Monad Mask or similar
-bracketErrIO before after thing =  (fmap fromRight) .  callIO $
+bracketErrIO before after thing =  (fmap fromRightEOV) .  callIO $
     bracket
         (do
             ra <- runErr $ before
             return ra) --  (ra :: ErrOrVal a) )
-        (\a -> runErr $ after  . fromRight  $ a )
-        (\a -> runErr $ thing . fromRight  $ a)
+        (\a -> runErr $ after  . fromRightEOV  $ a )
+        (\a -> runErr $ thing . fromRightEOV  $ a)
 
 --        ra <- before
 --        rc <- thing ra
