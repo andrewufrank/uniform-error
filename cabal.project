@@ -1,0 +1,4 @@
+packages: 
+    ./*.cabal
+    ../uniform-algebras/*.cabal
+    ../uniform-strings/*.cabal

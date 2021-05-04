@@ -1,4 +1,4 @@
------------------------------------------------------------------------------
+----------------------------------------------------------------------
 --
 -- Module      :  Uniform.Error
 --
@@ -6,7 +6,7 @@
 -- uses monads-tf  -- family used (not fp)
 -- and other monads often used (state)
 -- collects from eithererror package what is working (with monads-tf)
------------------------------------------------------------------------------
+----------------------------------------------------------------------
 --{-# OPTIONS_GHC -F -pgmF htfpp #-}
 {-# LANGUAGE BangPatterns          #-}
 --{-# LANGUAGE DeriveDataTypeable    #-}
@@ -28,14 +28,14 @@
 
 module Uniform.Error (module Uniform.Error
     , module Uniform.Strings
-    , module Safe
+    -- , module Safe
     , module Control.Monad.Error  -- is monads-tf
     , module Control.Exception   -- to avoid control.error
         )  where
 
-import "monads-tf" Control.Monad.Error
-import Control.Exception
-import Safe
+import "monads-tf" Control.Monad.Error (ErrorT, MonadError,ErrorType,MonadIO, Error, unless, when, catchError, liftIO, throwError, runErrorT)
+import Control.Exception (Exception, SomeException, bracket, catch)
+import Safe (headNote)
 import Uniform.Strings hiding ((</>), (<.>), S)
 
 instance CharChains2 IOError Text where
@@ -46,7 +46,7 @@ type ErrOrVal = Either Text
 type ErrIO  = ErrorT Text IO
 -- an instance of Control.Monad.Error for ErrIO is automatic
 
-instance Exception [Text] 
+instance Exception [Text]
 -- necessary to use throw in IO monad 
 
 --catchError :: (ErrIO a) -> ErrIO a -> ErrIO a
@@ -70,7 +70,7 @@ runErrorVoid a = do
                     case res of
                         Left msg -> error (t2s msg)
                         Right _ -> return ()
---
+
 undef :: Text -> a
 undef = error . t2s
 -- ^ for type specification, not to be evaluated
@@ -87,7 +87,7 @@ bracketErrIO
         -> ErrIO  c          -- returns the value from the in-between computation
 --bracketErrIO before after thing = bracket before after thing
 -- no way to catch IO errors reliably in ErrIO -- missing Monad Mask or similar
-bracketErrIO before after thing =  (fmap fromRightEOV) .  callIO $
+bracketErrIO before after thing =  fmap fromRightEOV .  callIO $
     bracket
         (do
             ra <- runErr $ before
@@ -102,7 +102,7 @@ instance Error Text where
 -- strMsg s = Left s
 
 callIO ::  (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
--- this is using now catch to grab all errors
+-- | this is using catch to grab all errors
 callIO op = do
         r2 <- liftIO $ do
                     r <- op
@@ -149,20 +149,20 @@ headNoteT :: [Text] -> [a] -> a
 headNoteT msg s = headNote (t2s $ unwords' msg) s
 
 startProg :: Show a => Text ->  ErrIO a -> IO ()
-startProg programName  mainProg = do  
-        putIOwords  [    "------------------ " 
-                    ,     programName  
+startProg programName  mainProg = do
+        putIOwords  [    "------------------ "
+                    ,     programName
                     ,    " ----------------------------\n"]
         r <- runErr $ mainProg
-        putIOwords 
+        putIOwords
             [ "\n------------------", "main", programName
             , "\nreturning", either id showT r
             , "\n"]
         return ()
     `catchError` (\e  -> do
-            putIOwords 
-                [ "startProg error caught\n", programName 
-                , "\n", showT e ]  
+            putIOwords
+                [ "startProg error caught\n", programName
+                , "\n", showT e ]
             return ()
             )
 

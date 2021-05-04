@@ -4,13 +4,14 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 46457736953c59439f3de1f961bfa16ae4b45cf49e60f79077110ba7e98846a4
+-- hash: c362f3512e173a38327943cfa7606b1969d01f8fa7b416488f464dcab16afc5a
 
 name:           uniform-error
 version:        0.0.10.1
 synopsis:       handling of errors in the uniform framework
-description:    a close to minimal package to handle errors and exception
-                in a simple but flexible way to reduce complexity of Haskell.
+description:    a  minimal package to handle errors and exception
+                in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
+                approaches encountered when writing applications.
                 .
                 Please see the README on GitHub at <https://github.com/githubuser/primo#readme>
 category:       Error Exception
@@ -37,6 +38,7 @@ library
     , safe
     , uniform-strings
   default-language: Haskell2010
+  autogen-modules: Paths_uniform_algebras
 
 test-suite error-test
   type: exitcode-stdio-1.0

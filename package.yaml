@@ -8,8 +8,9 @@ copyright:    2021 Andrew U. Frank
 category: Error Exception
 synopsis: handling of errors in the uniform framework
 description: |
-  a close to minimal package to handle errors and exception
-  in a simple but flexible way to reduce complexity of Haskell.
+  a  minimal package to handle errors and exception
+  in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
+  approaches encountered when writing applications.
       
   Please see the README on GitHub at <https://github.com/githubuser/primo#readme>
 
@@ -26,6 +27,9 @@ dependencies:
 library:
   source-dirs: 
   - .
+  verbatim:
+    autogen-modules:
+        Paths_uniform_algebras
 
 tests:
   error-test:
