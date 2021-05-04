@@ -3,31 +3,23 @@
 -- Module      :  Uniform.Error
 --
 ----------------------------------------------------------------------
---{-# OPTIONS_GHC -F -pgmF htfpp #-}
-{-# LANGUAGE BangPatterns #-}
---{-# LANGUAGE DeriveDataTypeable    #-}
-{-# LANGUAGE DoAndIfThenElse #-}
+
+    {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-warnings-deprecations #-}
 -- runErrorT is depreceiated but used in monads-tf
 {-# OPTIONS_GHC -w #-}
 
--- | a miniaml set of error processing
--- uses monads-tf  -- family used (not fp)
--- and other monads often used (state)
--- collects from eithererror package what is working (with monads-tf)
 module Uniform.Error
   ( module Uniform.Error,
     module Uniform.Strings,
-    -- , module Safe
+    module Safe,
     module Control.Monad.Error, -- is monads-tf
     module Control.Exception, -- to avoid control.error
   )
@@ -45,15 +37,8 @@ type ErrOrVal = Either Text
 
 type ErrIO = ErrorT Text IO
 
--- an instance of Control.Monad.Error for ErrIO is automatic
-
 instance Exception [Text]
 
--- necessary to use throw in IO monad
-
---catchError :: (ErrIO a) -> ErrIO a -> ErrIO a
----- | redefine catchError - the definition in monads-tf seems broken
---catchError = catch
 
 toErrOrVal :: Either String a -> ErrOrVal a
 toErrOrVal (Left s) = Left (s2t s)
@@ -68,7 +53,6 @@ runErrorVoid :: ErrIO () -> IO ()
 -- simpler to use than runErr
 runErrorVoid a = do
   res <- runErr a
-  --                    putIOwords ["runErrorVoid", showT res]
   case res of
     Left msg -> error (t2s msg)
     Right _ -> return ()
@@ -79,7 +63,7 @@ undef = error . t2s
 
 fromRightEOV :: ErrOrVal a -> a
 fromRightEOV (Right a) = a
-fromRightEOV (Left msg) = errorT ["fromright", msg]
+fromRightEOV (Left msg) = errorT ["fromrightEOV", msg]
 
 bracketErrIO ::
   -- | computation to run first (\"acquire resource\")
@@ -103,11 +87,7 @@ bracketErrIO before after thing =
 
 instance Error Text
 
--- noMsg = Left ""
--- strMsg s = Left s
-
 callIO :: (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
-
 -- | this is using catch to grab all errors
 callIO op = do
   r2 <-
@@ -125,7 +105,6 @@ callIO op = do
       throwError (showT e)
     Right v -> return v
 
---
 
 throwErrorT :: [Text] -> ErrIO a
 -- throw an error with a list of texts as a text
@@ -139,6 +118,7 @@ errorT :: [Text] -> a
 -- ^ a list of texts is output with failure
 errorT = error . t2s . unwordsT
 
+errorWords :: [Text] -> a
 errorWords = errorT
 
 fromJustNoteT :: [Text] -> Maybe a -> a
@@ -187,114 +167,3 @@ startProg programName mainProg =
                      return ()
                  )
 
--- | tools I thought could be useful for testing
---  when writing tests which must fail
-class (MonadError m) => Musts m where
-  mustFail :: Text -> f -> m Bool
-  mustFailIO :: Text -> m () -> m Bool
-  mustFailM :: Text -> m a -> m Bool
-  mustSucceed :: Text -> Bool -> m Bool
-
-  -- throws error if not True
-  mustSucceedIO :: Text -> m () -> m Bool
-  mustSucceedM :: Text -> m a -> m Bool
-
-  --    mustFailIOval :: Text -> m a -> m Bool
-  mustReturnTrueB,
-    mustReturnFalseB ::
-      Text -> m Bool -> m Bool
-  mustReturnValueMB :: Eq v => Text -> v -> m v -> m Bool
-  mustReturnValueErr :: (Eq v, Show v) => Text -> v -> v -> m Bool
-
--- todo move to error
--- does not work in the above situation
-mustError :: MonadError m => Text -> m a -> m Bool
-mustError msg f =
-  do
-    f
-    return False
-    `catchError` \e -> return True
-
-instance
-  ( MonadError m,
-    MonadIO m,
-    Show (ErrorType m),
-    m ~ ErrorT Text IO
-  ) =>
-  Musts m
-  where
-  mustFail st op =
-    do
-      let !a = op
-      throwErrorT ["should fail!", st]
-      return False
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail - expected", s]
-        return True
-
-  mustFailIO st op =
-    do
-      op
-      return False
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail expected  ()", s]
-        return True
-
-  mustFailM st op =
-    do
-      op
-      return False
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail expected  ok", s]
-        return True
-  mustSucceed st op =
-    do
-      let !a = op
-      if a then return a else throwErrorT [st, "did return False"]
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail - not expected", s]
-        return False
-
-  mustSucceedIO st op =
-    do
-      a <- op
-      return True
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail - not expected", s]
-        return True
-
-  mustSucceedM st op =
-    do
-      op
-      return True
-      `catchError` \s -> do
-        --                    error "Test"  -- does work
-        putIOwords [st, "did fail - not expected", s]
-        return False
-
-  mustReturnTrueB st op = do
-    t <- op
-    unless t $ putIOwords [st, "error - ", st]
-    return t
-
-  mustReturnFalseB st op = do
-    t <- op
-    when t $ putIOwords [st, "error - ", st]
-    return (not t)
-
-  mustReturnValueMB st v op = do
-    t <- op
-    unless (t == v) $ putIOwords [st, "error - ", st]
-    return (t == v)
-
-  mustReturnValueErr st v op = do
-    let !t = op
-    unless (t == v) $ do
-      putIOwords [st, "error - ", showT t, "expected", showT v]
-      throwErrorT [st, "error - ", showT t, "expected", showT v]
-    return (t == v)

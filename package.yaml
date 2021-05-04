@@ -2,17 +2,18 @@ name:         uniform-error
 version:      0.0.10.1
 license:      GPL
 license-file: GPL_3
-maintainer:   Andrew U. Frank <andrewufrank@gmail.com>
+maintainer:   Andrew U. Frank <frank@geoinfo.tuwien.ac.at>
 author:       Andrew Frank
 copyright:    2021 Andrew U. Frank
 category: Error Exception
 synopsis: handling of errors in the uniform framework
 description: |
-  a  minimal package to handle errors and exception
+  A minimal package to handle errors and exception
   in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
   approaches encountered when writing applications.
       
-  Please see the README on GitHub at <https://github.com/githubuser/primo#readme>
+  Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
+
 
 extra-source-files:
 - README.md
@@ -29,17 +30,17 @@ library:
   - .
   verbatim:
     autogen-modules:
-        Paths_uniform_algebras
+        Paths_uniform_error
 
-tests:
-  error-test:
-    main:                Testing.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    # - uniform-algebras
-    - uniform-error
-    - HTF
+# tests:
+#   error-test:
+#     main:                Testing.hs
+#     source-dirs:         test
+#     ghc-options:
+#     - -threaded
+#     - -rtsopts
+#     - -with-rtsopts=-N
+#     dependencies:
+#     # - uniform-algebras
+#     - uniform-error
+#     - HTF

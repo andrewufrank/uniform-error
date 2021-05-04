@@ -5,3 +5,4 @@
         .ghci 
         cleaned 
 0.0.10.1 added (moved) startApp from 
+0.1.0   cleaned and removed unnecessary comments and functions
