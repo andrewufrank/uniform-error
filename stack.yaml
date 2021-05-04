@@ -1,8 +1,0 @@
-flags: {}
-extra-package-dbs: []
-packages:
-- .
-- ../uniform-strings
-extra-deps:
-- test-invariant-0.4.5.0
-resolver: lts-10.8

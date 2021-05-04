@@ -31,15 +31,13 @@ module Uniform.Error (module Uniform.Error
     , module Safe
     , module Control.Monad.Error  -- is monads-tf
     , module Control.Exception   -- to avoid control.error
-
         )  where
 
-import           "monads-tf" Control.Monad.Error
-import           Safe
---import           Test.Framework
-import           Uniform.Strings hiding ((</>), (<.>))
-
+import "monads-tf" Control.Monad.Error
 import Control.Exception
+import Safe
+import Uniform.Strings hiding ((</>), (<.>), S)
+
 instance CharChains2 IOError Text where
     show' = s2t . show
 
@@ -48,9 +46,13 @@ type ErrOrVal = Either Text
 type ErrIO  = ErrorT Text IO
 -- an instance of Control.Monad.Error for ErrIO is automatic
 
+instance Exception [Text] 
+-- necessary to use throw in IO monad 
+
 --catchError :: (ErrIO a) -> ErrIO a -> ErrIO a
 ---- | redefine catchError - the definition in monads-tf seems broken
 --catchError = catch
+
 toErrOrVal :: Either String a -> ErrOrVal a
 toErrOrVal (Left s) = Left (s2t s)
 toErrOrVal (Right r) = Right r
@@ -58,6 +60,16 @@ toErrOrVal (Right r) = Right r
 -- | runErr to avoid the depreceated message for runErrorT, which is identical
 runErr :: ErrIO a -> IO (ErrOrVal a)
 runErr = runErrorT
+
+runErrorVoid :: ErrIO () -> IO ()
+-- ^ run an operation in ErrIO which is not returning anything
+-- simpler to use than runErr
+runErrorVoid a = do
+                    res <- runErr a
+--                    putIOwords ["runErrorVoid", showT res]
+                    case res of
+                        Left msg -> error (t2s msg)
+                        Right _ -> return ()
 --
 undef :: Text -> a
 undef = error . t2s
@@ -83,50 +95,25 @@ bracketErrIO before after thing =  (fmap fromRightEOV) .  callIO $
         (\a -> runErr $ after  . fromRightEOV  $ a )
         (\a -> runErr $ thing . fromRightEOV  $ a)
 
---        ra <- before
---        rc <- thing ra
---        return rc
---    `catchError` \e -> do
---                putIOwordsT ["bracketErrIO caught - release resource"]
---                rb <- after ra
---                throwError e
---                return rc
---
---  mask $ \restore -> do
---    a <- before
---    r <- restore ( thing a) `onExceptionErrIO` after a
---    _ <- after a
---    return r
---
----- | Like 'finally', but only performs the final action if there was an
----- exception raised by the computation.
---onExceptionErrIO :: ErrIO a -> ErrIO b -> ErrIO a
---onExceptionErrIO io what =
---            io
---        `catchError` \e -> do
---                            _ <- what
---                            throwError e
---       -- the exception is ot ErrorType  $ s2t .  displayException   $ (e :: SomeException)
 
-
---catchT :: (MonadError m, ErrorType m ~ Text) => m a -> (Text -> m a) -> m a
---catchT p f = do
---                  p
---                `catch` \(e::SomeException) -> f (showT e)
 
 instance Error Text where
 -- noMsg = Left ""
 -- strMsg s = Left s
 
---callIO ::  (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
+callIO ::  (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
 -- this is using now catch to grab all errors
 callIO op = do
         r2 <- liftIO $ do
                     r <- op
                     return $ Right r
-                `catch` (\e -> return . Left $  (e::SomeException))
+                `catch` (\e -> do
+--                         putStrLn "callIO catch caught error\n"
+                                return . Left $  (e::SomeException))
         case r2 of
-            Left e -> throwError (showT e)
+            Left e -> do
+--                        putIOwords ["\ncallIO Left branch\n", showT e, "throwError\n"]
+                        throwError (showT e)
             Right v -> return v
 --
 
@@ -147,10 +134,41 @@ fromJustNoteT :: [Text] -> Maybe a -> a
 -- produce error with msg when Nothing, msg is list of texts
 fromJustNoteT msgs a = fromJustNote (t2s . unlinesT $ msgs) a
 
+fromRightNoteString ::   Text -> Either String b -> b
+-- produce an error when assuming that a value is Right
+fromRightNoteString msg (Left a) = errorT ["fromRight", showT a, msg]
+fromRightNoteString _ (Right a) = a
+
+fromRightNote  ::   Text -> Either Text b -> b
+-- produce an error when assuming that a value is Right
+fromRightNote msg (Left a) = errorT ["fromRight", showT a, msg]
+fromRightNote _ (Right a) = a
+
 headNoteT :: [Text] -> [a] -> a
 -- get head with a list of texts
 headNoteT msg s = headNote (t2s $ unwords' msg) s
 
+startProg :: Show a => Text ->  ErrIO a -> IO ()
+startProg programName  mainProg = do  
+        putIOwords  [    "------------------ " 
+                    ,     programName  
+                    ,    " ----------------------------\n"]
+        r <- runErr $ mainProg
+        putIOwords 
+            [ "\n------------------", "main", programName
+            , "\nreturning", either id showT r
+            , "\n"]
+        return ()
+    `catchError` (\e  -> do
+            putIOwords 
+                [ "startProg error caught\n", programName 
+                , "\n", showT e ]  
+            return ()
+            )
+
+
+-- | tools I thought could be useful for testing 
+--  when writing tests which must fail
 class (MonadError m) => Musts  m where
     mustFail:: Text -> f -> m Bool
     mustFailIO :: Text -> m () -> m Bool

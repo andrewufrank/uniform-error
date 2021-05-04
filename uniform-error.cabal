@@ -1,51 +1,57 @@
-name: uniform-error
-version: 0.0.10.1
+cabal-version: 1.12
 
-cabal-version: >=1.22
-build-type: Simple
-license: GPL
-license-file: GPL_3
-maintainer: Andrew U. Frank <andrewufrank@gmail.com>
-author: Andrew Frank
-category: Error Exception
-synopsis: handling of errors in the uniform framework
-description: a close to minimal package to handle errors and exception
-    in a simple but flexible way to reduce complexity of Haskell.
-        0.0.9 fixed the callIO to really get the errors in IO
+-- This file has been generated from package.yaml by hpack version 0.34.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 46457736953c59439f3de1f961bfa16ae4b45cf49e60f79077110ba7e98846a4
 
-source-repository head
-    type: git
-    location: https://github.com/andrewufrank/uniform-error.git
+name:           uniform-error
+version:        0.0.10.1
+synopsis:       handling of errors in the uniform framework
+description:    a close to minimal package to handle errors and exception
+                in a simple but flexible way to reduce complexity of Haskell.
+                .
+                Please see the README on GitHub at <https://github.com/githubuser/primo#readme>
+category:       Error Exception
+author:         Andrew Frank
+maintainer:     Andrew U. Frank <andrewufrank@gmail.com>
+copyright:      2021 Andrew U. Frank
+license:        GPL
+license-file:   GPL_3
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
 
 library
-    build-depends:
-        base >=4.8 && <= 5
-        , monads-tf
-        , exceptions
-        , safe
-        , uniform-strings
-        , HTF
-    exposed-modules:
-        Uniform.Error
+  exposed-modules:
+      Uniform.Error
+  other-modules:
+      Paths_uniform_error
+  hs-source-dirs:
+      ./.
+  build-depends:
+      base >=4.7 && <5
+    , monads-tf
+    , safe
+    , uniform-strings
+  default-language: Haskell2010
 
-    exposed: True
-    buildable: True
-    default-language: Haskell2010
-    hs-source-dirs: .
-    other-modules:
-
-
-Test-Suite errortest
-    type:       exitcode-stdio-1.0
-    build-depends:  base -any
-        , HTF
-       , uniform-strings
-       , uniform-error
---       , data-easy
---       , basics -- must not be included, gives dependency issue
-    main-is: TestingError.hs
-    buildable: True
-    default-language: Haskell2010
-    hs-source-dirs: tests
-    other-modules:
-        Uniform.Error_test
+test-suite error-test
+  type: exitcode-stdio-1.0
+  main-is: Testing.hs
+  other-modules:
+      Uniform.Error_test
+      Paths_uniform_error
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HTF
+    , base >=4.7 && <5
+    , monads-tf
+    , safe
+    , uniform-error
+    , uniform-strings
+  default-language: Haskell2010
