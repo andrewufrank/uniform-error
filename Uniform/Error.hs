@@ -18,7 +18,7 @@
 
 module Uniform.Error
   ( module Uniform.Error,
-    module Uniform.Strings,
+    -- module Uniform.Strings,
     module Safe,
     module Control.Monad.Error, -- is monads-tf
     module Control.Exception, -- to avoid control.error
@@ -27,7 +27,7 @@ where
 
 import Control.Exception (Exception, SomeException, bracket, catch)
 import "monads-tf" Control.Monad.Error (Error, ErrorT, ErrorType, MonadError, MonadIO, catchError, liftIO, runErrorT, throwError, unless, when)
-import Safe (headNote)
+import Safe (headNote, readNote)
 import Uniform.Strings hiding (S, (<.>), (</>))
 
 instance CharChains2 IOError Text where

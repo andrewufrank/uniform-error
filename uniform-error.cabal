@@ -4,19 +4,19 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 13400077d7a3f31a22715435d35633c3fd60ec87ba9df3a90f5836fe32fcba77
+-- hash: 047e05cf3c1f73969e18837a31b8be5a18b4d2ad6ba3a896db19d29f3528293f
 
 name:           uniform-error
 version:        0.0.10.1
 synopsis:       handling of errors in the uniform framework
-description:    a  minimal package to handle errors and exception
+description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
                 approaches encountered when writing applications.
                 .
-                Please see the README on GitHub at <https://github.com/githubuser/primo#readme>
+                Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
 category:       Error Exception
 author:         Andrew Frank
-maintainer:     Andrew U. Frank <andrewufrank@gmail.com>
+maintainer:     Andrew U. Frank <frank@geoinfo.tuwien.ac.at>
 copyright:      2021 Andrew U. Frank
 license:        GPL
 license-file:   GPL_3
