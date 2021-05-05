@@ -1,25 +1,25 @@
-cabal-version: 1.12
+cabal-version: 2.2
 
 -- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 047e05cf3c1f73969e18837a31b8be5a18b4d2ad6ba3a896db19d29f3528293f
+-- hash: 7f798466051704587a2355486782bd1165e67a54c1ac54700691c2f06af5fd92
 
 name:           uniform-error
-version:        0.0.10.1
-synopsis:       handling of errors in the uniform framework
+version:        0.1.0
+synopsis:       Handling errors in the uniform framework
 description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
-                approaches encountered when writing applications.
+                approaches encountered in other packages when writing applications.
                 .
                 Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
-category:       Error Exception
+category:       Error Exception Uniform
+bug-reports:    https://github.com/andrewufrank/uniform-error/issues
 author:         Andrew Frank
-maintainer:     Andrew U. Frank <frank@geoinfo.tuwien.ac.at>
+maintainer:     Andrew U. Frank <uniform@gerastree.at>
 copyright:      2021 Andrew U. Frank
-license:        GPL
-license-file:   GPL_3
+license:        GPL-2.0-only
 build-type:     Simple
 extra-source-files:
     README.md
