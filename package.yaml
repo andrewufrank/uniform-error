@@ -1,16 +1,16 @@
 name:         uniform-error
-version:      0.0.10.1
-license:      GPL
-license-file: GPL_3
-maintainer:   Andrew U. Frank <frank@geoinfo.tuwien.ac.at>
+version:      0.1.0
+license:      GPL-2.0-only
+# license-file: GPL_3
+maintainer:   Andrew U. Frank <uniform@gerastree.at>
 author:       Andrew Frank
 copyright:    2021 Andrew U. Frank
-category: Error Exception
-synopsis: handling of errors in the uniform framework
+category: Error Exception Uniform
+synopsis: Handling errors in the uniform framework
 description: |
   A minimal package to handle errors and exception
   in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
-  approaches encountered when writing applications.
+  approaches encountered in other packages when writing applications.
       
   Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
 
