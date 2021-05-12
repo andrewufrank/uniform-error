@@ -33,15 +33,14 @@ library:
     autogen-modules:
         Paths_uniform_error
 
-# tests:
-#   error-test:
-#     main:                Testing.hs
-#     source-dirs:         test
-#     ghc-options:
-#     - -threaded
-#     - -rtsopts
-#     - -with-rtsopts=-N
-#     dependencies:
-#     # - uniform-algebras
-#     - uniform-error
-#     - HTF
+tests:
+  error-test:
+    main:                Testing.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - uniform-error
+    - HTF

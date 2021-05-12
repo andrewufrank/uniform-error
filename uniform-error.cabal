@@ -4,10 +4,10 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7f798466051704587a2355486782bd1165e67a54c1ac54700691c2f06af5fd92
+-- hash: b702e84a2202e9b9f16917643f2b4544ea2bf4637ec6381c14f249c71e54844a
 
 name:           uniform-error
-version:        0.1.0
+version:        0.1.1
 synopsis:       Handling errors in the uniform framework
 description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
@@ -39,3 +39,21 @@ library
     , uniform-strings
   default-language: Haskell2010
   autogen-modules: Paths_uniform_error
+
+test-suite error-test
+  type: exitcode-stdio-1.0
+  main-is: Testing.hs
+  other-modules:
+      Uniform.Error_test
+      Paths_uniform_error
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HTF
+    , base >=4.7 && <5
+    , monads-tf
+    , safe
+    , uniform-error
+    , uniform-strings
+  default-language: Haskell2010

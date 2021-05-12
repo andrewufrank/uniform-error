@@ -39,17 +39,7 @@ import Test.Framework
       TestSuite )
 --import           Uniform.Strings hiding ((</>), (<.>), (<|>))
 import Uniform.Error
-    ( catch,
-      SomeException,
-      MonadError(catchError, throwError),
-      putIOwords,
-      bracketErrIO,
-      callIO,
-      runErr,
-      ErrIO,
-      ErrOrVal,
-      Musts(mustSucceedM, mustFailM) )
-
+import Uniform.Strings
 import Control.Exception ( catch, SomeException )
 
 op1 :: ErrIO ()
@@ -73,15 +63,15 @@ test_bracket1 = do
     assertEqual True True
 
 
-errorTest ::   IO Bool
-errorTest = do
-    r <- runErr errorTest2
-    v1 <- case r of
-        Left msg -> do
-                putIOwords  ["errorTest returned Left :", msg]
-                return False
-        Right v -> return v
-    return v1
+-- errorTest ::   IO Bool
+-- errorTest = do
+--     r <- runErr errorTest2
+--     v1 <- case r of
+--         Left msg -> do
+--                 putIOwords  ["errorTest returned Left :", msg]
+--                 return False
+--         Right v -> return v
+--     return v1
 
 
 
@@ -92,14 +82,14 @@ errorTest = do
 --
 --  `catchError` \s -> return True
 
-errorTest2 ::   ErrIO Bool
-errorTest2 = do
-    c1 :: Bool <- mustFailM "test throw" $ (throwError "error1")
-    c2 :: Bool <- mustSucceedM "test return ok" $ (return ())
-    c3 <- mustSucceedM "test catch ok" $ test2catch True
-    c4 <- mustSucceedM "test catch ok" $ test2catch False
-    let res = and [c1, c2, c3, c4]
-    return res
+-- errorTest2 ::   ErrIO Bool
+-- errorTest2 = do
+--     c1 :: Bool <- mustFailM "test throw" $ (throwError "error1")
+--     c2 :: Bool <- mustSucceedM "test return ok" $ (return ())
+--     c3 <- mustSucceedM "test catch ok" $ test2catch True
+--     c4 <- mustSucceedM "test catch ok" $ test2catch False
+--     let res = and [c1, c2, c3, c4]
+--     return res
 
 
 test2catch :: Bool -> ErrIO ()
@@ -117,10 +107,10 @@ test2catch b =
         return ()
         )
 
-test_error2 :: IO ()
-test_error2 = do
-    r <- (runErr errorTest2)
-    assertEqual (Right True :: ErrOrVal Bool)  r
+-- test_error2 :: IO ()
+-- test_error2 = do
+--     r <- (runErr errorTest2)
+--     assertEqual (Right True :: ErrOrVal Bool)  r
 
 test_catch2 :: IO ()
 test_catch2 = do
