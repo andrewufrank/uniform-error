@@ -97,12 +97,12 @@ test2catch b = do
     (if b then return ()
         else do
             putIOwords ["ssd"]
-            throwError "test2catch message"
+            throwErrorT "test2catch message"
         )
   `catchE` (\e -> do
                 putIOwords ["error caught when thrown"]
                 -- putIOwords ["the error", showT (e :: SomeException)]
-                throwError "test2catch - error caught"
+                throwErrorT "test2catch - error caught"
                 )
 -- 
 -- test_error2 :: IO ()

@@ -17,16 +17,25 @@
 {-# OPTIONS_GHC -w #-}
 
 module Uniform.Error
-  ( module Uniform.Error,
+  ( module Uniform.Error
     -- module Uniform.Strings,
-    module Safe,
-    module Control.Monad.Error, -- is monads-tf
-    module Control.Exception, -- to avoid control.error
+    , module Safe
+    , module Control.Monad
+    , module Control.Monad.Trans.Except
+    , liftIO 
+    , SomeException
+    -- , module Control.Monad.IO.Class  
+    
+    -- module Control.Monad.Error, -- is monads-tf
+    -- module Control.Excepcation, -- to avoid control.error
   )
 where
 
-import Control.Exception (Exception, SomeException, bracket, catch)
-import "monads-tf" Control.Monad.Error (Error, ErrorT, ErrorType, MonadError, MonadIO, catchError, liftIO, runErrorT, throwError, unless, when)
+import Control.Exception (Exception, SomeException, bracket, catch, throw, SomeException)
+import Control.Monad  -- just to make it available everywhere
+import Control.Monad.IO.Class (liftIO, MonadIO)
+-- import "monads-tf" Control.Monad.Error (Error, ErrorT, ErrorType, MonadError, MonadIO, catchError, liftIO, runErrorT, throwError, unless, when)
+import Control.Monad.Trans.Except
 import Safe (headNote, readNote)
 import Uniform.Strings hiding (S, (<.>), (</>))
 
@@ -35,9 +44,9 @@ instance CharChains2 IOError Text where
 
 type ErrOrVal = Either Text
 
-type ErrIO = ErrorT Text IO
+type ErrIO = ExceptT Text IO
 
-instance Exception [Text]
+-- instance Exception [Text]
 
 
 toErrOrVal :: Either String a -> ErrOrVal a
@@ -46,7 +55,7 @@ toErrOrVal (Right r) = Right r
 
 -- | runErr to avoid the depreceated message for runErrorT, which is identical
 runErr :: ErrIO a -> IO (ErrOrVal a)
-runErr = runErrorT
+runErr = runExceptT
 
 runErrorVoid :: ErrIO () -> IO ()
 -- ^ run an operation in ErrIO which is not returning anything
@@ -85,30 +94,42 @@ bracketErrIO before after thing =
       (\a -> runErr $ after . fromRightEOV $ a)
       (\a -> runErr $ thing . fromRightEOV $ a)
 
-instance Error Text
+-- instance Error Text
 
-callIO :: (MonadError m, MonadIO m, ErrorType m ~ Text) => IO a -> m a
+callIO ::  
+    -- (MonadError m, MonadIO m, ErrorType m ~ Text) => 
+    -- (MonadIO m) => 
+            IO a -> ErrIO a
 -- | this is using catch to grab all errors
 callIO op = do
-  r2 <-
-    liftIO $
-      do
-        r <- op
-        return $ Right r
-        `catch` ( \e -> do
-                    --                         putStrLn "callIO catch caught error\n"
-                    return . Left $ (e :: SomeException)
-                )
-  case r2 of
-    Left e -> do
+    r2 <- liftIO $
+            do
+                r <- op
+                return $ Right r
+            `catch` ( \e -> do
+                        -- putStrLn "callIO catch caught error\n"
+                        return . Left $  (e :: SomeException)
+                    )
+    case r2 of
+        Left e -> do
       --                        putIOwords ["\ncallIO Left branch\n", showT e, "throwError\n"]
-      throwError (showT e)
-    Right v -> return v
+                        throwE (showT e)
+        Right v -> return v
 
 
-throwErrorT :: [Text] -> ErrIO a
+throwErrorWords :: [Text] -> ErrIO a
 -- throw an error with a list of texts as a text
-throwErrorT = throwError . unwordsT
+throwErrorWords = throwE . unwordsT
+
+
+throwErrorT :: Text -> ErrIO a
+-- throw an error - for compatibility with old code
+throwErrorT = throwE  
+
+catchError :: Monad m	=> ExceptT e m a	
+                        -> (e -> ExceptT e' m a) -> ExceptT e' m a
+-- catch Error in the ExceptT monad (but not others??)
+catchError = catchE 
 
 maybe2error :: Maybe a -> ErrIO a
 maybe2error Nothing = fail "was Nothing"
@@ -141,28 +162,29 @@ headNoteT msg s = headNote (t2s $ unwords' msg) s
 
 startProg :: Show a => Text -> ErrIO a -> IO ()
 startProg programName mainProg =
-  do
-    putIOwords
-      [ "------------------ ",
-        programName,
-        " ----------------------------\n"
-      ]
-    r <- runErr $ mainProg
-    putIOwords
-      [ "\n------------------",
-        "main",
-        programName,
-        "\nreturning",
-        either id showT r,
-        "\n"
-      ]
-    return ()
-    `catchError` ( \e -> do
+      (do
+        putIOwords
+            [ "------------------ ",
+                programName,
+                " ----------------------------\n"
+            ]
+        r <-  runErr $ mainProg
+        putIOwords
+            [ "\n------------------",
+                "main",
+                programName,
+                "\nreturning",
+                either id showT r,
+                "\n"
+            ]
+        return ()
+        )
+    `catch` ( \e -> do  -- here catch because in the IO monad 
+                        -- (not ExceptT )
                      putIOwords
                        [ "startProg error caught\n",
-                         programName,
-                         "\n",
-                         showT e
+                         programName, "\n",
+                         showT (e :: SomeException)
                        ]
                      return ()
                  )

@@ -1,5 +1,5 @@
 name:         uniform-error
-version:      0.1.1
+version:      0.1.2
 license:      GPL-2.0-only
 # license-file: GPL_3
 maintainer:   Andrew U. Frank <uniform@gerastree.at>
@@ -22,7 +22,8 @@ extra-source-files:
 
 dependencies:
 - base >= 4.7 && < 5
-- monads-tf
+# - monads-tf
+- transformers
 - safe
 - uniform-strings >= 0.1.2
 
@@ -33,14 +34,14 @@ library:
     autogen-modules:
         Paths_uniform_error
 
-# tests:
-#   error-test:
-#     main:                Testing.hs
-#     source-dirs:         test
-#     ghc-options:
-#     - -threaded
-#     - -rtsopts
-#     - -with-rtsopts=-N
-#     dependencies:
-#     - uniform-error
-#     - HTF
+tests:
+  error-test:
+    main:                Testing.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - uniform-error
+    - HTF
