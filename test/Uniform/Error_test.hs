@@ -93,20 +93,18 @@ test_bracket1 = do
 
 
 test2catch :: Bool -> ErrIO ()
-test2catch b =
-    if b then return ()
-        else throwError "test2catch message"
-  `catchError` (\e -> do
-        if not b then
-            do
-                putIOwords ["ok - error thrown and caught:", e ]
-                return True
-            else do
-                putIOwords ["error caught when thrown"]
-                throwError "test2catch - error caught when not thrown"
-        return ()
+test2catch b = do 
+    (if b then return ()
+        else do
+            putIOwords ["ssd"]
+            throwError "test2catch message"
         )
-
+  `catchE` (\e -> do
+                putIOwords ["error caught when thrown"]
+                -- putIOwords ["the error", showT (e :: SomeException)]
+                throwError "test2catch - error caught"
+                )
+-- 
 -- test_error2 :: IO ()
 -- test_error2 = do
 --     r <- (runErr errorTest2)
@@ -120,7 +118,13 @@ test_catch2 = do
 test_catch2f :: IO ()
 test_catch2f = do
     r <- (runErr $ test2catch False)
-    assertEqual (Right () :: ErrOrVal ())  r
+    assertEqual (Left "test2catch - error caught" :: ErrOrVal ())  r
+
+test_catch2x :: IO ()  -- catch bomb, not caught - yet
+test_catch2x = do
+    r <- (runErr $ test2catch undefined)
+    assertEqual (Left "test2catch - error caught" :: ErrOrVal ())  r
+
 
 --instance (Show a) => Strings (ErrOrVal a) where
 --    toString (Left msg) = msg
