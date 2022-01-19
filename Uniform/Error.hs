@@ -22,7 +22,7 @@ module Uniform.Error
     , module Safe
     , module Control.Monad
     , module Control.Monad.Trans.Except
-    , liftIO 
+    , liftIO, MonadIO 
     , SomeException
     -- , module Control.Monad.IO.Class  
     
@@ -35,6 +35,9 @@ import Control.Exception (Exception, SomeException, bracket, catch, throw, SomeE
 import Control.Monad  -- just to make it available everywhere
 import Control.Monad.IO.Class (liftIO, MonadIO)
 -- import "monads-tf" Control.Monad.Error (Error, ErrorT, ErrorType, MonadError, MonadIO, catchError, liftIO, runErrorT, throwError, unless, when)
+
+-- ErrorT Text IO xxx becomes ErrIO xxx
+
 import Control.Monad.Trans.Except
 import Safe (headNote, readNote)
 import Uniform.Strings hiding (S, (<.>), (</>))
