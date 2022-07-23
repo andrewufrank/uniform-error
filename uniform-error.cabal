@@ -1,21 +1,21 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.6.
+-- This file has been generated from package.yaml by hpack version 0.35.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e9c88195559dfe3390afdda769ddadb647e9422fb585bc7770a4c6ea13a1c8ad
+-- hash: c47f92101ef8ccea1f09bb2d556bb209628baebfbcae67fbcfd614a124740ac1
 
 name:           uniform-error
-version:        0.1.2
+version:        0.1.3
 synopsis:       Handling errors in the uniform framework
 description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
                 approaches encountered in other packages when writing applications.
                 .
-                Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
+                0.1.3 added stack build lts 19.16 for ghc 9.0.2
                 .
-                v 0.1.2 moved to Control.Monad.Exception
+                Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
 category:       Error Exception Uniform
 bug-reports:    https://github.com/andrewufrank/uniform-error/issues
 author:         Andrew Frank
@@ -38,7 +38,7 @@ library
       base >=4.7 && <5
     , safe
     , transformers
-    , uniform-strings >=0.1.2
+    , uniform-strings >=0.1.3
   default-language: Haskell2010
   autogen-modules: Paths_uniform_error
 
@@ -59,5 +59,5 @@ test-suite error-test
     , safe
     , transformers
     , uniform-error
-    , uniform-strings >=0.1.2
+    , uniform-strings >=0.1.3
   default-language: Haskell2010
