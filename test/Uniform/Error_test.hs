@@ -31,12 +31,13 @@ module Uniform.Error_test where
 --import           "monads-tf" Control.Monad.Error
 --import           Safe
 import Test.Framework
-    ( assertBool_,
-      assertEqual_,
-      makeLoc,
+    ( makeLoc,
       makeTestSuite,
       makeUnitTest,
       TestSuite )
+import Test.Framework.HUnitWrapper 
+    -- (assertBool_,
+    --   assertEqual_,)
 --import           Uniform.Strings hiding ((</>), (<.>), (<|>))
 import Uniform.Error
 import Uniform.Strings

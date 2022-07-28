@@ -4,10 +4,10 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c47f92101ef8ccea1f09bb2d556bb209628baebfbcae67fbcfd614a124740ac1
+-- hash: 71fb216a1b3ede5ebc2f311150235a8675f51d329d38fc1c2ee3a88a916ef8d9
 
 name:           uniform-error
-version:        0.1.3
+version:        0.1.3.1
 synopsis:       Handling errors in the uniform framework
 description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
