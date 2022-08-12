@@ -1,3 +1,4 @@
+# stack.yaml for uniform-error 
 
 resolver: lts-19.16 # for ghc 9.0.2 newest lts
 
@@ -5,14 +6,15 @@ packages:
 - .
  
 extra-deps:   #to expand with local packages 
-# - ../uniform-algebras
-- uniform-algebras-0.1.3@sha256:b367633d547124f158e3db4b981ed05bdc9225c3bdbce53dd7127d542ac68132,1583
+- ../uniform-algebras
+#- uniform-algebras-0.1.3@sha256:b367633d547124f158e3db4b981ed05bdc9225c3bdbce53dd7127d542ac68132,1583
+
 # - ../uniform-strings
 - uniform-strings-0.1.3.1@sha256:3bf3bf9043a732f6d0802694f12940f4d7a2cfa62c37b08a4e27ee3ce82878af,2701
 
 
 - test-invariant-0.4.5.0@sha256:d1aa6b61e0057a4065eeff3286208e947a0b44c6a2186210399f5e5e7fb0d0dd,1902
-
+- aop-prelude-0.4.1.1@sha256:87f541964bb8c0e042125955bf1580020a664e62ab101b0a1068b8f278c2e001,1207
 ghc-options:
   "$everything": -haddock  # for documentation
   "$everything": -Wno-deprecations
