@@ -14,3 +14,4 @@
 0.1.3.1 maintenance to fix #1 -- checked with ghc 8.10.7
         import HTF (Test.Framework.HUnitWrapper) unqualified to get the asserts (export in HTF 0.15.0.0 changed see the change log)
 0.1.3.2 moved the NoticeLevel to a module in uniform-error
+0.1.5.1 for ghc 9.2.5

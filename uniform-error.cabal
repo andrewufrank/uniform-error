@@ -4,7 +4,7 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7a22f0e0fbec144eb64f8f41b3065b392835412852e591568c0a5ec214c27e0a
+-- hash: 5c4b806cb768276955e0b92f7e5f13247f2c0a36c746ef65bd703dd254740088
 
 name:           uniform-error
 version:        0.1.3.2
@@ -12,8 +12,6 @@ synopsis:       Handling errors in the uniform framework
 description:    A minimal package to handle errors and exception
                 in a simple but flexible way. Includes functions to adapt the prefered method of calling IO with error handling (ErrIO) to the 
                 approaches encountered in other packages when writing applications.
-                .
-                0.1.3 added stack build lts 19.16 for ghc 9.0.2
                 .
                 Please see the README on GitHub at <https://github.com/andrewufrank/uniform-error/readme>
 category:       Error Exception Uniform
